@@ -4,9 +4,9 @@ import Container from "react-bootstrap/Container";
 import "./index.scss";
 
 const App = () => {
-  return ( 
-    <Container style={{border: "1px solid red"}}>
-       <MainView /> 
+  return (
+    <Container>
+      <MainView />
     </Container>
   )
 };
