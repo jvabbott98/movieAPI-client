@@ -26372,16 +26372,20 @@ const MainView = ()=>{
                 Authorization: `Bearer ${token}`
             }
         }).then((response)=>response.json()).then((movies)=>{
-            // const moviesFromApi = data.map((movie) => {
-            //     return {
-            //         title: movie.title,
-            //         image: movie.imageUrl,
-            //         director: movie.director.name,
-            //         description: movie.description,
-            //         genre: movie.genre.name
-            //     };
-            // });
-            setMovies(movies);
+            console.log(movies);
+            const moviesFromApi = data.map((movies)=>{
+                return {
+                    id: movie._id,
+                    title: movie.title,
+                    image: movie.imageUrl,
+                    description: movie.description,
+                    genre: movie.genre.name,
+                    director: movie.director.name,
+                    featured: movie.featured
+                };
+            });
+            setMovies(moviesFromApi);
+            localStorage.setItem("movies", JSON.stringify(movies));
         });
     }, [
         token
@@ -26392,22 +26396,25 @@ const MainView = ()=>{
             md: 5,
             children: [
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _loginView.LoginView), {
-                    onLoggedIn: (user)=>setUser(user)
+                    onLoggedIn: (user, token)=>{
+                        setUser(user);
+                        setToken(token);
+                    }
                 }, void 0, false, {
                     fileName: "src/components/main-view/main-view.jsx",
-                    lineNumber: 44,
+                    lineNumber: 47,
                     columnNumber: 11
                 }, undefined),
                 "or",
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _signupView.SignupView), {}, void 0, false, {
                     fileName: "src/components/main-view/main-view.jsx",
-                    lineNumber: 46,
+                    lineNumber: 52,
                     columnNumber: 11
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/components/main-view/main-view.jsx",
-            lineNumber: 43,
+            lineNumber: 46,
             columnNumber: 9
         }, undefined) : selectedMovie ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _.Col), {
             md: 8,
@@ -26416,34 +26423,34 @@ const MainView = ()=>{
                 onBackClick: ()=>setSelectedMovie(null)
             }, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 50,
+                lineNumber: 56,
                 columnNumber: 11
             }, undefined)
         }, void 0, false, {
             fileName: "src/components/main-view/main-view.jsx",
-            lineNumber: 49,
+            lineNumber: 55,
             columnNumber: 9
         }, undefined) : movies.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
             children: "The list is empty!"
         }, void 0, false, {
             fileName: "src/components/main-view/main-view.jsx",
-            lineNumber: 56,
+            lineNumber: 62,
             columnNumber: 9
         }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
-            children: movies.map((movie)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieCard.MovieCard), {
-                    movie: movie,
+            children: movies.map((movie1)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieCard.MovieCard), {
+                    movie: movie1,
                     onMovieClick: (newSelectedMovie)=>{
                         setSelectedMovie(newSelectedMovie);
                     }
-                }, movie.id, false, {
+                }, movie1.id, false, {
                     fileName: "src/components/main-view/main-view.jsx",
-                    lineNumber: 60,
+                    lineNumber: 66,
                     columnNumber: 13
                 }, undefined))
         }, void 0, false)
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 41,
+        lineNumber: 44,
         columnNumber: 5
     }, undefined);
 };
@@ -28407,7 +28414,7 @@ var _formDefault = parcelHelpers.interopDefault(_form);
 var _button = require("react-bootstrap/Button");
 var _buttonDefault = parcelHelpers.interopDefault(_button);
 var _s = $RefreshSig$();
-const LoginView = ()=>{
+const LoginView = (onLoggedin)=>{
     _s();
     const [username, setUsername] = (0, _react.useState)("");
     const [password, setPassword] = (0, _react.useState)("");
@@ -28420,7 +28427,20 @@ const LoginView = ()=>{
         };
         fetch("https://justinsmoviedb-6d40ef42c02f.herokuapp.com/login", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(data)
+        }).then((response)=>response.json()).then((data)=>{
+            console.log("Login response: ", data);
+            if (data.user) {
+                localStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("token", data.token);
+                onLoggedIn(data.user, data.token);
+            } else alert("No such user");
+        }).catch((e)=>{
+            console.log(error);
+            alert("Something went wrong: " + error);
         });
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default), {
@@ -28433,7 +28453,7 @@ const LoginView = ()=>{
                         children: "Username:"
                     }, void 0, false, {
                         fileName: "src/components/login-view/login-view.jsx",
-                        lineNumber: 27,
+                        lineNumber: 47,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
@@ -28444,13 +28464,13 @@ const LoginView = ()=>{
                         minLength: "3"
                     }, void 0, false, {
                         fileName: "src/components/login-view/login-view.jsx",
-                        lineNumber: 28,
+                        lineNumber: 48,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/login-view/login-view.jsx",
-                lineNumber: 26,
+                lineNumber: 46,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Group, {
@@ -28460,7 +28480,7 @@ const LoginView = ()=>{
                         children: "Password:"
                     }, void 0, false, {
                         fileName: "src/components/login-view/login-view.jsx",
-                        lineNumber: 38,
+                        lineNumber: 58,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
@@ -28470,13 +28490,13 @@ const LoginView = ()=>{
                         required: true
                     }, void 0, false, {
                         fileName: "src/components/login-view/login-view.jsx",
-                        lineNumber: 39,
+                        lineNumber: 59,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/login-view/login-view.jsx",
-                lineNumber: 37,
+                lineNumber: 57,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _buttonDefault.default), {
@@ -28485,74 +28505,61 @@ const LoginView = ()=>{
                 children: "Submit"
             }, void 0, false, {
                 fileName: "src/components/login-view/login-view.jsx",
-                lineNumber: 46,
+                lineNumber: 66,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/components/login-view/login-view.jsx",
-        lineNumber: 25,
+        lineNumber: 45,
         columnNumber: 5
     }, undefined);
 }; // import React from "react";
- // import {useState} from "react";
- // export const LoginView = ({onLoggedIn}) => {
- //     const [username, setUsername] = useState("");
- //     const [password, setPassword] = useState("");
- //     const handleSubmit = (event) => {
- //       // this prevents the default behavior of the form which is to reload the entire page
- //       event.preventDefault();
- //       const data = {
- //         access: username,
- //         secret: password
- //       };
- //         //insert url here
- //     fetch("https://justinsmoviedb-6d40ef42c02f.herokuapp.com/login", {
- //         method: "POST",
- //         headers: {
- //             "Content-Type": "application/json"
- //           },
- //           body: JSON.stringify(data)
- //         })
- //           .then((response) => response.json())
- //           .then((data) => {
- //             console.log("Login response: ", data);
- //             if (data.user) {
- //                 localStorage.setItem("user", JSON.stringify(data.user));
- //                 localStorage.setItem("token", data.token);
- //                 onLoggedIn(data.user, data.token);
- //             } else {
- //                 alert("No such user");
- //             }
- //           })
- //           .catch((e) => {
- //             alert("Something went wrong");
- //           });
+ // import { useState } from "react";
+ // import Form from "react-bootstrap/Form";
+ // import Button from "react-bootstrap/Button";
+ // export const LoginView = () => {
+ //   const [username, setUsername] = useState("");
+ //   const [password, setPassword] = useState("");
+ //   const handleSubmit = (event) => {
+ //     // this prevents the default behavior of the form which is to reload the entire page
+ //     event.preventDefault();
+ //     const data = {
+ //       access: username,
+ //       secret: password
  //     };
- //     return (
- //       <form>
- //         <label>
- //           Username:
- //           <input 
- //             type="text"
- //             value={username}
- //             onChange={(e) => setUsername(e.target.value)}
- //             required 
- //             />
- //         </label>
- //         <label>
- //           Password:
- //           <input 
- //             type="password" 
- //             value={password}
- //             onChange={(e) => setPassword(e.target.value)} 
- //             required
- //             />
- //         </label>
- //         <button type="submit">Submit</button>
- //       </form>
- //     );
+ //     fetch("https://justinsmoviedb-6d40ef42c02f.herokuapp.com/login", {
+ //       method: "POST",
+ //       body: JSON.stringify(data)
+ //     });
  //   };
+ //   return (
+ //     <Form onSubmit={handleSubmit}>
+ //       <Form.Group controlId="formUsername">
+ //         <Form.Label>Username:</Form.Label>
+ //         <Form.Control
+ //           type="text"
+ //           value={username}
+ //           onChange={(e) => setUsername(e.target.value)}
+ //           required
+ //           minLength="3"
+ //         />
+ //       </Form.Group>
+ //       <Form.Group controlId="formPassword">
+ //         <Form.Label>Password:</Form.Label>
+ //         <Form.Control
+ //           type="password"
+ //           value={password}
+ //           onChange={(e) => setPassword(e.target.value)}
+ //           required
+ //         />
+ //       </Form.Group>
+ //       <Button variant="primary" type="submit">
+ //         Submit
+ //       </Button>
+ //     </Form>
+ //   );
+ // };
 _s(LoginView, "Lrw7JeD9zj6OUWhT/IH4OIvPKEk=");
 _c = LoginView;
 var _c;
@@ -28563,7 +28570,7 @@ $RefreshReg$(_c, "LoginView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"2Jxcn","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"aK49X","react-bootstrap/Form":"iBZ80","react-bootstrap/Button":"aPzUt"}],"iBZ80":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","react-bootstrap/Form":"iBZ80","react-bootstrap/Button":"aPzUt","@parcel/transformer-js/src/esmodule-helpers.js":"2Jxcn","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"aK49X"}],"iBZ80":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _classnames = require("classnames");

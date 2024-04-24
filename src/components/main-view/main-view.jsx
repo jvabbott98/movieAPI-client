@@ -23,17 +23,20 @@ export const MainView = () => {
     })
       .then((response) => response.json())
       .then((movies) => {
-        // const moviesFromApi = data.map((movie) => {
-        //     return {
-        //         title: movie.title,
-        //         image: movie.imageUrl,
-        //         director: movie.director.name,
-        //         description: movie.description,
-        //         genre: movie.genre.name
-        //     };
-        // });
-
-        setMovies(movies);
+        console.log(movies);
+        const moviesFromApi = data.map((movies) => {
+          return {
+            id: movie._id,
+            title: movie.title,
+            image: movie.imageUrl,
+            description: movie.description,
+            genre: movie.genre.name,
+            director: movie.director.name,
+            featured: movie.featured,
+          };
+        });
+        setMovies(moviesFromApi);
+        localStorage.setItem("movies", JSON.stringify(movies));
       });
   }, [token]);
 
@@ -41,7 +44,10 @@ export const MainView = () => {
     <Row className="justify-content-md-center">
       {!user ? (
         <Col md={5}>
-          <LoginView onLoggedIn={(user) => setUser(user)} />
+          <LoginView onLoggedIn={(user, token) => {
+            setUser(user);
+            setToken(token);
+          }} />
           or
           <SignupView />
         </Col>
